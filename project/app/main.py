@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .db import get_session, init_db
-from .models import Song, SongCreate
+from .models import Employee, EmployeeCreate
 
 app = FastAPI()
 
@@ -13,18 +13,35 @@ async def pong():
     return {"ping": "pong!"}
 
 
-@app.get("/songs", response_model=list[Song])
-async def get_songs(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(Song))
-    songs = result.scalars().all()
-    return [Song(name=song.name, artist=song.artist, year=song.year, id=song.id) for song in songs]
+@app.get("/employee", response_model=list[Employee])
+async def get_employee(session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Employee))
+    employee = result.scalars().all()
+    return [
+        Employee(
+            full_name=empl.full_name,
+            job_title=empl.job_title,
+            employment_date=empl.employment_date,
+            salary=empl.salary,
+            id_chief=empl.id_chief,
+            id=empl.id,
+        )
+        for empl in employee
+    ]
 
 
-@app.post("/songs")
-async def add_song(song: SongCreate, session: AsyncSession = Depends(get_session)):
-    song = Song(name=song.name, artist=song.artist, year=song.year)
-    session.add(song)
+@app.post("/employee")
+async def add_employee(
+    empl: EmployeeCreate, session: AsyncSession = Depends(get_session)
+):
+    empl = Employee(
+        full_name=empl.full_name,
+        job_title=empl.job_title,
+        employment_date=empl.employment_date,
+        salary=empl.salary,
+        id_chief=empl.id_chief,
+    )
+    session.add(empl)
     await session.commit()
-    await session.refresh(song)
-    return song
-
+    await session.refresh(empl)
+    return empl

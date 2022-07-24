@@ -3,15 +3,17 @@ from typing import Optional
 from sqlmodel import SQLModel, Field
 
 
-class SongBase(SQLModel):
-    name: str
-    artist: str
-    year: Optional[int] = None
+class EmployeeBase(SQLModel):
+    full_name: str
+    job_title: str
+    employment_date: str
+    salary: int
+    id_chief: Optional[int] = None
 
 
-class Song(SongBase, table=True):
+class Employee(EmployeeBase, table=True):
     id: int = Field(default=None, primary_key=True)
 
 
-class SongCreate(SongBase):
+class EmployeeCreate(EmployeeBase):
     pass
